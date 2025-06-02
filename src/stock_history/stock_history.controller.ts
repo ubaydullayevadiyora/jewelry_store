@@ -1,34 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { StockHistoryService } from './stock_history.service';
-import { CreateStockHistoryDto } from './dto/create-stock_history.dto';
-import { UpdateStockHistoryDto } from './dto/update-stock_history.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from "@nestjs/common";
+import { StockHistoryService } from "./stock_history.service";
+import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { CreateStockHistoryDto } from "./dto/create-stock_history.dto";
+import { UpdateStockHistoryDto } from "./dto/update-stock_history.dto";
 
-@Controller('stock-history')
+@ApiTags("StockHistory")
+@Controller("stock-history")
 export class StockHistoryController {
-  constructor(private readonly stockHistoryService: StockHistoryService) {}
+  constructor(private readonly service: StockHistoryService) {}
 
   @Post()
-  create(@Body() createStockHistoryDto: CreateStockHistoryDto) {
-    return this.stockHistoryService.create(createStockHistoryDto);
+  @ApiOperation({ summary: "Create stock history record" })
+  create(@Body() dto: CreateStockHistoryDto) {
+    return this.service.create(dto);
   }
 
   @Get()
+  @ApiOperation({ summary: "Get all stock history records" })
   findAll() {
-    return this.stockHistoryService.findAll();
+    return this.service.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.stockHistoryService.findOne(+id);
+  @Get(":id")
+  @ApiOperation({ summary: "Get stock history by ID" })
+  findOne(@Param("id") id: string) {
+    return this.service.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStockHistoryDto: UpdateStockHistoryDto) {
-    return this.stockHistoryService.update(+id, updateStockHistoryDto);
+  @Put(":id")
+  @ApiOperation({ summary: "Update stock history" })
+  update(@Param("id") id: string, @Body() dto: UpdateStockHistoryDto) {
+    return this.service.update(+id, dto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.stockHistoryService.remove(+id);
+  @Delete(":id")
+  @ApiOperation({ summary: "Delete stock history" })
+  remove(@Param("id") id: string) {
+    return this.service.remove(+id);
   }
 }

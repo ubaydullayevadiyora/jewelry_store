@@ -1,26 +1,60 @@
-import { Injectable } from '@nestjs/common';
-import { CreateStockHistoryDto } from './dto/create-stock_history.dto';
-import { UpdateStockHistoryDto } from './dto/update-stock_history.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { StockHistory } from "./entities/stock_history.entity";
+import { Stock } from "../stock/entities/stock.entity";
+import { CreateStockHistoryDto } from "./dto/create-stock_history.dto";
+import { UpdateStockHistoryDto } from "./dto/update-stock_history.dto";
+
 
 @Injectable()
 export class StockHistoryService {
-  create(createStockHistoryDto: CreateStockHistoryDto) {
-    return 'This action adds a new stockHistory';
+  constructor(
+    @InjectRepository(StockHistory)
+    private historyRepo: Repository<StockHistory>,
+    @InjectRepository(Stock)
+    private stockRepo: Repository<Stock>
+  ) {}
+
+  async create(dto: CreateStockHistoryDto) {
+    const stock = await this.stockRepo.findOneBy({ id: dto.stockId });
+    if (!stock) throw new NotFoundException("Stock not found");
+
+    const history = this.historyRepo.create({
+      change: dto.change,
+      reason: dto.reason,
+      stock,
+    });
+
+    return this.historyRepo.save(history);
   }
 
   findAll() {
-    return `This action returns all stockHistory`;
+    return this.historyRepo.find({ relations: ["stock"] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} stockHistory`;
+  async findOne(id: number) {
+    const history = await this.historyRepo.findOne({
+      where: { id },
+      relations: ["stock"],
+    });
+    if (!history) throw new NotFoundException("History not found");
+    return history;
   }
 
-  update(id: number, updateStockHistoryDto: UpdateStockHistoryDto) {
-    return `This action updates a #${id} stockHistory`;
+  async update(id: number, dto: UpdateStockHistoryDto) {
+    const history = await this.findOne(id);
+    if (dto.stockId) {
+      const stock = await this.stockRepo.findOneBy({ id: dto.stockId });
+      if (!stock) throw new NotFoundException("Stock not found");
+      history.stock = stock;
+    }
+    Object.assign(history, dto);
+    return this.historyRepo.save(history);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} stockHistory`;
+  async remove(id: number) {
+    const history = await this.findOne(id);
+    return this.historyRepo.remove(history);
   }
 }

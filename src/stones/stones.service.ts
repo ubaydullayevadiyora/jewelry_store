@@ -1,26 +1,40 @@
-import { Injectable } from '@nestjs/common';
-import { CreateStoneDto } from './dto/create-stone.dto';
-import { UpdateStoneDto } from './dto/update-stone.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { CreateStoneDto } from "./dto/create-stone.dto";
+import { UpdateStoneDto } from "./dto/update-stone.dto";
+import { Stone } from "./entities/stone.entity";
 
 @Injectable()
 export class StonesService {
-  create(createStoneDto: CreateStoneDto) {
-    return 'This action adds a new stone';
+  constructor(
+    @InjectRepository(Stone)
+    private stoneRepo: Repository<Stone>
+  ) {}
+
+  create(dto: CreateStoneDto) {
+    const stone = this.stoneRepo.create(dto);
+    return this.stoneRepo.save(stone);
   }
 
   findAll() {
-    return `This action returns all stones`;
+    return this.stoneRepo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} stone`;
+  async findOne(id: number) {
+    const stone = await this.stoneRepo.findOne({ where: { id } });
+    if (!stone) throw new NotFoundException("Stone not found");
+    return stone;
   }
 
-  update(id: number, updateStoneDto: UpdateStoneDto) {
-    return `This action updates a #${id} stone`;
+  async update(id: number, dto: UpdateStoneDto) {
+    const stone = await this.findOne(id);
+    const updated = Object.assign(stone, dto);
+    return this.stoneRepo.save(updated);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} stone`;
+  async remove(id: number) {
+    const stone = await this.findOne(id);
+    return this.stoneRepo.remove(stone);
   }
 }

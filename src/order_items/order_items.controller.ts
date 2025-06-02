@@ -1,34 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { OrderItemsService } from './order_items.service';
-import { CreateOrderItemDto } from './dto/create-order_item.dto';
-import { UpdateOrderItemDto } from './dto/update-order_item.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from "@nestjs/common";
+import { OrderItemsService } from "./order_items.service";
+import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { CreateOrderItemDto } from "./dto/create-order_item.dto";
+import { UpdateOrderItemDto } from "./dto/update-order_item.dto";
 
-@Controller('order-items')
+@ApiTags("OrderItems")
+@Controller("order-items")
 export class OrderItemsController {
-  constructor(private readonly orderItemsService: OrderItemsService) {}
+  constructor(private readonly service: OrderItemsService) {}
 
   @Post()
-  create(@Body() createOrderItemDto: CreateOrderItemDto) {
-    return this.orderItemsService.create(createOrderItemDto);
+  @ApiOperation({ summary: "Create order item" })
+  create(@Body() dto: CreateOrderItemDto) {
+    return this.service.create(dto);
   }
 
   @Get()
+  @ApiOperation({ summary: "Get all order items" })
   findAll() {
-    return this.orderItemsService.findAll();
+    return this.service.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orderItemsService.findOne(+id);
+  @Get(":id")
+  @ApiOperation({ summary: "Get order item by ID" })
+  findOne(@Param("id") id: string) {
+    return this.service.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderItemDto: UpdateOrderItemDto) {
-    return this.orderItemsService.update(+id, updateOrderItemDto);
+  @Put(":id")
+  @ApiOperation({ summary: "Update order item" })
+  update(@Param("id") id: string, @Body() dto: UpdateOrderItemDto) {
+    return this.service.update(+id, dto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.orderItemsService.remove(+id);
+  @Delete(":id")
+  @ApiOperation({ summary: "Delete order item" })
+  remove(@Param("id") id: string) {
+    return this.service.remove(+id);
   }
 }

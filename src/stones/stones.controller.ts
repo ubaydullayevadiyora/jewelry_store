@@ -1,34 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { StonesService } from './stones.service';
-import { CreateStoneDto } from './dto/create-stone.dto';
-import { UpdateStoneDto } from './dto/update-stone.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from "@nestjs/common";
+import { StonesService } from "./stones.service";
+import { CreateStoneDto } from "./dto/create-stone.dto";
+import { UpdateStoneDto } from "./dto/update-stone.dto";
+import { ApiTags, ApiOperation } from "@nestjs/swagger";
 
-@Controller('stones')
+@ApiTags("Stones")
+@Controller("stones")
 export class StonesController {
   constructor(private readonly stonesService: StonesService) {}
 
   @Post()
-  create(@Body() createStoneDto: CreateStoneDto) {
-    return this.stonesService.create(createStoneDto);
+  @ApiOperation({ summary: "Create a new stone" })
+  create(@Body() dto: CreateStoneDto) {
+    return this.stonesService.create(dto);
   }
 
   @Get()
+  @ApiOperation({ summary: "Get all stones" })
   findAll() {
     return this.stonesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  @ApiOperation({ summary: "Get a stone by ID" })
+  findOne(@Param("id") id: string) {
     return this.stonesService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStoneDto: UpdateStoneDto) {
-    return this.stonesService.update(+id, updateStoneDto);
+  @Put(":id")
+  @ApiOperation({ summary: "Update a stone" })
+  update(@Param("id") id: string, @Body() dto: UpdateStoneDto) {
+    return this.stonesService.update(+id, dto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  @ApiOperation({ summary: "Delete a stone" })
+  remove(@Param("id") id: string) {
     return this.stonesService.remove(+id);
   }
 }

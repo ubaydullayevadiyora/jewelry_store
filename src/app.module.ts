@@ -6,20 +6,18 @@ import { Admin } from "./admins/entities/admin.entity";
 import { AdminModule } from "./admins/admins.module";
 import { CustomerModule } from "./customer/customer.module";
 import { ManagerModule } from "./manager/manager.module";
-import { ProductsModule } from "./products/products.module";
 import { MaterialsModule } from "./materials/materials.module";
 import { StonesModule } from "./stones/stones.module";
 import { StockHistoryModule } from "./stock_history/stock_history.module";
-import { StockModule } from "./stock/stock.module";
 import { OrdersModule } from "./orders/orders.module";
 import { OrderItemsModule } from "./order_items/order_items.module";
 import { PaymentsModule } from "./payments/payments.module";
 import { DeliveryModule } from "./delivery/delivery.module";
 import { Manager } from "./manager/entities/manager.entity";
 import { Customer } from "./customer/entities/customer.entity";
-import { GraphQLModule } from "@nestjs/graphql";
-import { join } from "path";
-import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
+import { AuthModule } from "./auth/auth.module";
+import { ProductModule } from "./products/products.module";
+import { StocksModule } from "./stock/stock.module";
 
 @Module({
   imports: [
@@ -37,25 +35,28 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
       autoLoadEntities: true,
     }),
 
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: "schema.gql",
-      sortSchema: true,
-      playground: true,
-    }),
+    // GraphQLModule.forRoot<ApolloDriverConfig>({
+    //   driver: ApolloDriver,
+    //   autoSchemaFile: "schema.gql",
+    //   sortSchema: true,
+    //   playground: true,
+    // }),
 
     AdminModule,
     CustomerModule,
     ManagerModule,
-    ProductsModule,
+    ProductModule,
     MaterialsModule,
     StonesModule,
     StockHistoryModule,
-    StockModule,
+    StocksModule,
     OrdersModule,
     OrderItemsModule,
     PaymentsModule,
     DeliveryModule,
+    AuthModule,
   ],
+  // controllers: [AdminController, CustomerController, ManagerController],
+  // providers: [AdminService, CustomerService, ManagerService],
 })
 export class AppModule {}

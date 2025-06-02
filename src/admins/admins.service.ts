@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { CreateAdminDto } from "./dto/create-admin.dto";
 import { UpdateAdminDto } from "./dto/update-admin.dto";
 import { Admin } from "./entities/admin.entity";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AdminService {
@@ -12,8 +13,14 @@ export class AdminService {
     private readonly adminRepo: Repository<Admin>
   ) {}
 
-  create(dto: CreateAdminDto) {
-    const admin = this.adminRepo.create(dto);
+  async create(dto: CreateAdminDto) {
+    const hashedPassword = await bcrypt.hash(dto.password_hash, 10); // 10 - salt rounds
+
+    const admin = this.adminRepo.create({
+      ...dto,
+      password_hash: hashedPassword,
+    });
+
     return this.adminRepo.save(admin);
   }
 
@@ -28,7 +35,7 @@ export class AdminService {
   }
 
   async update(id: number, dto: UpdateAdminDto) {
-    await this.findOne(id); 
+    await this.findOne(id);
     await this.adminRepo.update(id, dto);
     return this.findOne(id);
   }
