@@ -51,7 +51,7 @@ export class Manager {
   is_active: boolean;
 
   @Field()
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   @ApiProperty({
     example: "refresh_token_value",
     description: "Refresh token",

@@ -3,9 +3,20 @@ import { AppModule } from "./app.module";
 import { ValidationPipe, BadRequestException } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import * as cookieParser from "cookie-parser";
+import * as basicAuth from "express-basic-auth";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(
+    ["/api/docs"],
+    basicAuth({
+      users: {
+        superadmin: "strong2025",
+      },
+      challenge: true,
+    })
+  );
 
   app.use(cookieParser());
 
@@ -39,10 +50,21 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle("Skidkachi Project")
+    .setTitle("Jewelry Store Project")
     .setDescription("REST API for jewelry system")
     .setVersion("1.0")
     .addTag("NestJS, TypeORM, Swagger")
+    .addBearerAuth(
+      {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        name: "JWT",
+        description: "Enter JWT token",
+        in: "header",
+      },
+      "access-token" //swagger decoratorda ishlatamiz!
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

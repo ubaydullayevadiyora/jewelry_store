@@ -18,6 +18,15 @@ import { Customer } from "./customer/entities/customer.entity";
 import { AuthModule } from "./auth/auth.module";
 import { ProductModule } from "./products/products.module";
 import { StocksModule } from "./stock/stock.module";
+import { Product } from "./products/entities/product.entity";
+import { Material } from "./materials/entities/material.entity";
+import { Stock } from "./stock/entities/stock.entity";
+import { Stone } from "./stones/entities/stone.entity";
+import { Category } from "./category/entities/category.entity";
+import { Delivery } from "./delivery/entities/delivery.entity";
+import { Order } from "./orders/entities/order.entity";
+import { OrderItem } from "./order_items/entities/order_item.entity";
+import { CategoriesModule } from "./category/category.module";
 
 @Module({
   imports: [
@@ -30,7 +39,19 @@ import { StocksModule } from "./stock/stock.module";
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [Admin, Manager, Customer],
+      entities: [
+        Admin,
+        Manager,
+        Customer,
+        Product,
+        Material,
+        Stock,
+        Stone,
+        Category,
+        Delivery,
+        Order,
+        OrderItem,
+      ],
       synchronize: true,
       autoLoadEntities: true,
     }),
@@ -54,6 +75,7 @@ import { StocksModule } from "./stock/stock.module";
     OrderItemsModule,
     PaymentsModule,
     DeliveryModule,
+    CategoriesModule,
     AuthModule,
   ],
   // controllers: [AdminController, CustomerController, ManagerController],

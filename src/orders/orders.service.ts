@@ -65,7 +65,7 @@ export class OrdersService {
   }
 
   async getOrderById(id: number): Promise<Order> {
-    const order = await this.orderRepository.findOne({
+    const order = await this.orderRepo.findOne({
       where: { id },
       relations: [
         "customer",

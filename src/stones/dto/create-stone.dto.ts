@@ -8,18 +8,10 @@ export class CreateStoneDto {
   name: string;
 
   @ApiProperty()
-  @IsString()
-  carat: string;
+  @IsNotEmpty()
+  carat: number;
 
   @ApiProperty()
   @IsString()
   color: string;
-
-  @ApiProperty()
-  @IsString()
-  shape: string;
-
-  @ApiProperty()
-  @IsString()
-  origin: string;
 }

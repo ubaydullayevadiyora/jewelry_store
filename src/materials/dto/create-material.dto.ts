@@ -8,9 +8,8 @@ export class CreateMaterialDto {
   name: string;
 
   @ApiProperty()
-  @IsString()
   @IsNotEmpty()
-  proba: string;
+  proba: number;
 
   @ApiProperty()
   @IsString()

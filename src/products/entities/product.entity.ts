@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Material } from "../../materials/entities/material.entity";
 import { Stone } from "../../stones/entities/stone.entity";
@@ -15,9 +24,9 @@ export class Product {
   @ApiProperty()
   material_id: number;
 
-  @Column()
-  @ApiProperty()
-  stone_id: number;
+  // @Column()
+  // @ApiProperty()
+  // stone_id: number;
 
   @Column()
   @ApiProperty()
@@ -39,6 +48,10 @@ export class Product {
   @ApiProperty()
   weight: number;
 
+  @Column("decimal")
+  @ApiProperty()
+  size: number;
+
   @Column()
   @ApiProperty()
   image_url: string;
@@ -47,17 +60,36 @@ export class Product {
   @ApiProperty()
   is_active: boolean;
 
+  // stone: number[];
+
   @ManyToOne(() => Material, (material) => material.products)
   @JoinColumn({ name: "material_id" })
   material: Material;
 
-  @ManyToOne(() => Stone)
-  @JoinColumn({ name: "stone_id" })
-  stone: Stone;
+  // @ManyToOne(() => Stone)
+  // @JoinColumn({ name: "stone_id" })
+  // stone: Stone;
 
-  @ManyToOne(() => Category, (category) => category.products)
+  @ManyToOne(() => Category, (category) => category.products, {
+    nullable: true,
+  })
+  @JoinColumn({ name: "category_id" })
   category: Category;
 
   @OneToMany(() => Stock, (stock) => stock.product)
   stocks: Stock[];
+
+  @ManyToMany(() => Stone, { cascade: true })
+  @JoinTable({
+    name: "product_stones",
+    joinColumn: {
+      name: "product_id",
+      referencedColumnName: "id",
+    },
+    inverseJoinColumn: {
+      name: "stone_id",
+      referencedColumnName: "id",
+    },
+  })
+  stones: Stone[];
 }

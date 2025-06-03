@@ -14,7 +14,7 @@ export class Material {
 
   @Column()
   @ApiProperty()
-  proba: string;
+  proba: number;
 
   @Column()
   @ApiProperty()

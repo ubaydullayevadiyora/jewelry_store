@@ -70,7 +70,7 @@ export class Customer {
   is_verified: boolean;
 
   @Field()
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   @ApiProperty({
     example: "refresh_token_string",
     description: "Refresh token",

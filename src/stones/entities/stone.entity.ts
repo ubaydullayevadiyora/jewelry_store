@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
+import { Product } from "../../products/entities/product.entity";
 
 @Entity("stones")
 export class Stone {
@@ -11,19 +12,14 @@ export class Stone {
   @ApiProperty()
   name: string;
 
-  @Column("text")
+  @Column("decimal")
   @ApiProperty()
-  carat: string;
+  carat: number;
 
   @Column()
   @ApiProperty()
   color: string;
 
-  @Column()
-  @ApiProperty()
-  shape: string;
-
-  @Column()
-  @ApiProperty()
-  origin: string;
+  @ManyToMany(() => Product, (product) => product.stones)
+  products: Product[];
 }
