@@ -10,51 +10,37 @@ import {
 
 @InputType()
 export class CreateCustomerDto {
-  @Field()
   @IsString()
   firstname: string;
 
-  @Field()
   @IsString()
   lastname: string;
 
-  @Field()
   @IsString()
   phone_number: string;
 
-  @Field()
   @IsEmail()
   email: string;
 
-  @Field()
   @IsString()
   @MinLength(6)
-  password_hash: string;
+  password: string;
 
-  @Field()
+  @IsString()
+  @MinLength(6)
+  confirm_password: string;
+
   @IsString()
   birth_date: string;
 
-  @Field()
   @IsString()
   address: string;
 
-  @Field()
   @IsOptional()
-  @IsBoolean()
-  is_active?: boolean;
-
-  @Field()
-  @IsOptional()
-  @IsBoolean()
-  is_verified?: boolean;
-
-  @Field()
   @IsNumber()
-  otp?: number;
+  otp_code: string;
 
-  @Field()
   @IsOptional()
   @IsString()
-  refresh_token?: string;
+  telegram_id: string;
 }

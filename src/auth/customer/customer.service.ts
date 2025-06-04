@@ -1,4 +1,3 @@
-// src/auth/customer/customer.service.ts
 import {
   BadRequestException,
   ForbiddenException,
@@ -14,7 +13,6 @@ import { Response } from "express";
 import { Customer } from "../../customer/entities/customer.entity";
 import { CreateCustomerDto } from "../../customer/dto/create-customer.dto";
 import { OtpService } from "../../common/services/otp.service";
-import { EmailService } from "../../common/services/email.service";
 import { TelegramService } from "../../common/services/telegram.service";
 
 @Injectable()
@@ -24,8 +22,7 @@ export class CustomerAuthService {
     private readonly customerRepo: Repository<Customer>,
     private readonly jwtService: JwtService,
     private readonly otpService: OtpService,
-    private readonly emailService: EmailService,
-    private readonly telegramService: TelegramService,
+    private readonly telegramService: TelegramService
   ) {}
 
   async generateTokens(customer: Customer) {
@@ -52,21 +49,60 @@ export class CustomerAuthService {
   }
 
   async signUp(dto: CreateCustomerDto) {
-    const customer = this.customerRepo.create(dto);
+    if (!dto.telegram_id) {
+      throw new BadRequestException("Telegram ID kiritilishi shart");
+    }
 
-    const otp = this.otpService.generateOtp();
+    const customer = this.customerRepo.create(dto);
+    customer.is_active = false;
+
+    const otp = this.otpService.generateOtp().toString();
     customer.otp_code = otp;
     customer.otp_expire_at = this.otpService.getExpiry();
 
     await this.customerRepo.save(customer);
 
-    await this.emailService.sendOtp(customer.email, otp);
+    // Telegramga OTP yuborish
+    await this.telegramService.sendOtpToTelegram(customer.telegram_id, otp);
 
-    if (customer.telegram_id) {
-      await this.telegramService.sendOtpToTelegram(customer.telegram_id, otp);
+    // Bot linki, foydalanuvchi unga bosib OTP tasdiqlaydi
+    const telegramBotLink =
+      process.env.TELEGRAM_BOT_LINK || "https://t.me/YourBotUsername";
+
+    return {
+      message:
+        "Royxatdan otish muvaffaqiyatli. Telegram bot orqali OTP tasdiqlang.",
+      telegramBotLink,
+    };
+  }
+
+  async verifyOtp(telegram_id: string, otp: string) {
+    const customer = await this.customerRepo.findOne({
+      where: { telegram_id },
+    });
+
+    if (!customer) {
+      throw new BadRequestException("Foydalanuvchi topilmadi");
     }
 
-    return { message: "OTP yuborildi" };
+    if (customer.is_active) {
+      throw new BadRequestException("Hisob allaqachon faollashtirilgan");
+    }
+
+    if (
+      customer.otp_code !== otp ||
+      !customer.otp_expire_at ||
+      customer.otp_expire_at < new Date()
+    ) {
+      throw new BadRequestException("Noto'g'ri yoki muddati o'tgan OTP");
+    }
+
+    customer.is_active = true;
+    customer.otp_code = null;
+    customer.otp_expire_at = null;
+    await this.customerRepo.save(customer);
+
+    return { message: "Hisob muvaffaqiyatli faollashtirildi" };
   }
 
   async signIn(signInCustomerDto: SignInCustomerDto, res: Response) {
@@ -78,9 +114,15 @@ export class CustomerAuthService {
       throw new BadRequestException("Customer topilmadi");
     }
 
+    if (!customer.is_active) {
+      throw new ForbiddenException(
+        "Hisob faollashtirilmagan. Telegram bot orqali OTP tasdiqlang."
+      );
+    }
+
     const isMatch = await bcrypt.compare(
       signInCustomerDto.password,
-      customer.password_hash
+      customer.password
     );
 
     if (!isMatch) {
@@ -95,7 +137,6 @@ export class CustomerAuthService {
     });
 
     customer.hashed_refresh_token = await bcrypt.hash(refreshToken, 7);
-    customer.is_active = true;
     await this.customerRepo.save(customer);
 
     return {

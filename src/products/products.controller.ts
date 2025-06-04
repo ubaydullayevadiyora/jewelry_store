@@ -6,12 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { ApiTags, ApiResponse } from "@nestjs/swagger";
 import { ProductService } from "./products.service";
 import { Product } from "./entities/product.entity";
+import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
+import { RolesGuard } from "../common/guards/roles.guard";
 
 @ApiTags("Product")
 @Controller("products")
@@ -24,6 +27,7 @@ export class ProductController {
     return this.productService.create(createProductDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   @ApiResponse({ status: 200, type: [Product] })
   findAll() {

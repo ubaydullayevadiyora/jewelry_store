@@ -27,6 +27,8 @@ import { Delivery } from "./delivery/entities/delivery.entity";
 import { Order } from "./orders/entities/order.entity";
 import { OrderItem } from "./order_items/entities/order_item.entity";
 import { CategoriesModule } from "./category/category.module";
+import { Payment } from "./payments/entities/payment.entity";
+import { StockHistory } from "./stock_history/entities/stock_history.entity";
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { CategoriesModule } from "./category/category.module";
         Delivery,
         Order,
         OrderItem,
+        Payment,
+        StockHistory
       ],
       synchronize: true,
       autoLoadEntities: true,

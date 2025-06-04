@@ -5,18 +5,33 @@ import { JwtModule } from "@nestjs/jwt";
 import { AdminModule } from "../admins/admins.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Admin } from "../admins/entities/admin.entity";
+import { CustomerModule } from "../customer/customer.module";
+import { ManagerModule } from "../manager/manager.module";
+import { Customer } from "../customer/entities/customer.entity";
+import { Manager } from "../manager/entities/manager.entity";
+import { CustomerAuthService } from "./customer/customer.service";
+import { ManagerAuthService } from "./manager/manager.service";
+import { CustomerAuthController } from "./customer/customer.controller";
+import { ManagerAuthController } from "./manager/manager.controller";
+import { ServiceModule } from "../common/services/service.module";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Admin]),
+    TypeOrmModule.forFeature([Admin, Customer, Manager]),
     JwtModule.register({
       secret: process.env.ACCESS_TOKEN_KEY,
       signOptions: { expiresIn: process.env.ACCESS_TOKEN_TIME },
     }),
-    AdminModule
+    AdminModule,
+    CustomerModule,
+    ManagerModule,
+    ServiceModule,
   ],
-  providers: [AdminAuthService],
-  controllers: [AdminAuthController],
+  providers: [AdminAuthService, CustomerAuthService, ManagerAuthService],
+  controllers: [
+    AdminAuthController,
+    CustomerAuthController,
+    ManagerAuthController,
+  ],
 })
 export class AuthModule {}
-

@@ -11,11 +11,22 @@ import { SignInCustomerDto } from "./dto/customer-sign-in.dto";
 import { Response, Request } from "express";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { CustomerAuthService } from "./customer.service";
+import { CreateCustomerDto } from "../../customer/dto/create-customer.dto";
 
 @ApiTags("Customer Auth")
 @Controller("auth/customer")
 export class CustomerAuthController {
   constructor(private readonly customerAuthService: CustomerAuthService) {}
+
+  @Post("sign-up")
+  @ApiOperation({ summary: "Customer royxatdan otadi" })
+  @ApiResponse({ status: 201, description: "OTP yuborildi" })
+  async signUp(
+    @Body() createCustomerDto: CreateCustomerDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    return this.customerAuthService.signUp(createCustomerDto);
+  }
 
   @Post("sign-in")
   @ApiOperation({ summary: "Customer tizimga kiradi" })
@@ -24,6 +35,7 @@ export class CustomerAuthController {
     @Body() signInDto: SignInCustomerDto,
     @Res({ passthrough: true }) res: Response
   ) {
+    // Tokenlarni generatsiya qilib, cookie va javobni qaytaradi
     return this.customerAuthService.signIn(signInDto, res);
   }
 

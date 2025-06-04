@@ -16,7 +16,7 @@ export class TelegramService {
     this.bot = new Telegraf(token);
   }
 
-  async sendOtpToTelegram(chatId: string, otp: number) {
+  async sendOtpToTelegram(chatId: string, otp: string) {
     await this.bot.telegram.sendMessage(chatId, `Sizning OTP kodingiz: ${otp}`);
   }
 }

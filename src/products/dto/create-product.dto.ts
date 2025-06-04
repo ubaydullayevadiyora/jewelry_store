@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNumber, IsBoolean } from "class-validator";
+import { IsString, IsNumber, IsBoolean, IsArray } from "class-validator";
 
 export class CreateProductDto {
   @ApiProperty()
@@ -42,6 +42,8 @@ export class CreateProductDto {
   @IsBoolean()
   is_active: boolean;
 
+  @IsArray()
+  @IsNumber({}, { each: true }) 
   @ApiProperty({ type: [Number] })
   stones: number[];
 }

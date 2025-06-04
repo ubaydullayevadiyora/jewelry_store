@@ -16,10 +16,7 @@ export class ProductService {
   ) {}
 
   async create(createProductDto: CreateProductDto) {
-    const {
-      stones: stoneIds,
-      ...productData
-    } = createProductDto;
+    const { stones: stoneIds, ...productData } = createProductDto;
 
     const stones = await this.stoneRepo.findBy({ id: In(stoneIds) });
 
@@ -38,7 +35,10 @@ export class ProductService {
   }
 
   async findOne(id: number) {
-    const product = await this.productRepo.findOne({ where: { id } });
+    const product = await this.productRepo.findOne({
+      where: { id },
+      relations: ["category", "material", "stones"],
+    });
     if (!product) throw new NotFoundException("Product not found");
     return product;
   }
@@ -51,6 +51,7 @@ export class ProductService {
 
   async remove(id: number) {
     const product = await this.findOne(id);
-    return this.productRepo.remove(product);
+    await this.productRepo.remove(product);
+    return { message: "Mahsulot o'chirildi" };
   }
 }
