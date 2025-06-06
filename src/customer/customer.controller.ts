@@ -18,16 +18,16 @@ import { Customer } from "./entities/customer.entity";
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
-  @Post()
-  @ApiOperation({ summary: "Yangi customer yaratish" })
-  @ApiResponse({
-    status: 201,
-    description: "Customer muvaffaqiyatli yaratildi",
-    type: Customer,
-  })
-  create(@Body() createCustomerDto: CreateCustomerDto) {
-    return this.customerService.create(createCustomerDto);
-  }
+  // @Post()
+  // @ApiOperation({ summary: "Yangi customer yaratish" })
+  // @ApiResponse({
+  //   status: 201,
+  //   description: "Customer muvaffaqiyatli yaratildi",
+  //   type: Customer,
+  // })
+  // create(@Body() createCustomerDto: CreateCustomerDto) {
+  //   return this.customerService.create(createCustomerDto);
+  // }
 
   @Get()
   @ApiOperation({ summary: "Barcha customerlarni olish" })

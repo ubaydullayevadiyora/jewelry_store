@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
@@ -13,7 +14,8 @@ import { Response } from "express";
 import { Customer } from "../../customer/entities/customer.entity";
 import { CreateCustomerDto } from "../../customer/dto/create-customer.dto";
 import { OtpService } from "../../common/services/otp.service";
-import { TelegramService } from "../../common/services/telegram.service";
+import { MailService } from "../../common/services/email.service";
+import { TelegramBotService } from "../../bot/bot.service";
 
 @Injectable()
 export class CustomerAuthService {
@@ -22,7 +24,8 @@ export class CustomerAuthService {
     private readonly customerRepo: Repository<Customer>,
     private readonly jwtService: JwtService,
     private readonly otpService: OtpService,
-    private readonly telegramService: TelegramService
+    private readonly telegramBotService: TelegramBotService,
+    private readonly mailService: MailService
   ) {}
 
   async generateTokens(customer: Customer) {
@@ -49,10 +52,6 @@ export class CustomerAuthService {
   }
 
   async signUp(dto: CreateCustomerDto) {
-    if (!dto.telegram_id) {
-      throw new BadRequestException("Telegram ID kiritilishi shart");
-    }
-
     const customer = this.customerRepo.create(dto);
     customer.is_active = false;
 
@@ -62,39 +61,39 @@ export class CustomerAuthService {
 
     await this.customerRepo.save(customer);
 
-    // Telegramga OTP yuborish
-    await this.telegramService.sendOtpToTelegram(customer.telegram_id, otp);
+    // if (customer.telegram_id) {
+    //   await this.telegramBotService.sendOtpToTelegram(
+    //     customer.telegram_id,
+    //     Number(otp)
+    //   );
+    // }
 
-    // Bot linki, foydalanuvchi unga bosib OTP tasdiqlaydi
-    const telegramBotLink =
-      process.env.TELEGRAM_BOT_LINK || "https://t.me/YourBotUsername";
+    const telegramBotLink = process.env.TELEGRAM_BOT_LINK;
 
+    if (customer.email) {
+      const subject = "Royxatdan otish va OTP tasdiqlash";
+      const message = `Assalomu alaykum, ${customer.firstname}!\n\nRoyxatdan otganingiz uchun rahmat.\n\nIltimos, quyidagi Telegram bot orqali otp kodingizni oling:\n${telegramBotLink}`;
+
+      await this.mailService.sendMail(customer.email, subject, message);
+    }
     return {
       message:
-        "Royxatdan otish muvaffaqiyatli. Telegram bot orqali OTP tasdiqlang.",
-      telegramBotLink,
+        "Royxatdan otish muvaffaqiyatli. Iltimos, Emailni tekshiring."
     };
   }
 
-  async verifyOtp(telegram_id: string, otp: string) {
+  async verifyOtp(dto: { telegram_id: string; otp: string }) {
     const customer = await this.customerRepo.findOne({
-      where: { telegram_id },
+      where: { telegram_id: dto.telegram_id },
     });
 
-    if (!customer) {
-      throw new BadRequestException("Foydalanuvchi topilmadi");
-    }
+    if (!customer) throw new NotFoundException("Foydalanuvchi topilmadi");
 
-    if (customer.is_active) {
-      throw new BadRequestException("Hisob allaqachon faollashtirilgan");
-    }
+    if (customer.otp_code !== dto.otp)
+      throw new BadRequestException("OTP notogri");
 
-    if (
-      customer.otp_code !== otp ||
-      !customer.otp_expire_at ||
-      customer.otp_expire_at < new Date()
-    ) {
-      throw new BadRequestException("Noto'g'ri yoki muddati o'tgan OTP");
+    if (customer.otp_expire_at && customer.otp_expire_at < new Date()) {
+      throw new BadRequestException("OTP muddati tugagan");
     }
 
     customer.is_active = true;
@@ -102,7 +101,7 @@ export class CustomerAuthService {
     customer.otp_expire_at = null;
     await this.customerRepo.save(customer);
 
-    return { message: "Hisob muvaffaqiyatli faollashtirildi" };
+    return { message: "Tasdiq muvaffaqiyatli yakunlandi ✅" };
   }
 
   async signIn(signInCustomerDto: SignInCustomerDto, res: Response) {
@@ -116,7 +115,7 @@ export class CustomerAuthService {
 
     if (!customer.is_active) {
       throw new ForbiddenException(
-        "Hisob faollashtirilmagan. Telegram bot orqali OTP tasdiqlang."
+        "Hisob faollashtirilmagan. Telegram bot orqali OTP tasdiqlang!!!"
       );
     }
 

@@ -10,7 +10,7 @@ import {
 import { SignInCustomerDto } from "./dto/customer-sign-in.dto";
 import { Response, Request } from "express";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { CustomerAuthService } from "./customer.service";
+import { CustomerAuthService } from "./customer-auth.service";
 import { CreateCustomerDto } from "../../customer/dto/create-customer.dto";
 
 @ApiTags("Customer Auth")

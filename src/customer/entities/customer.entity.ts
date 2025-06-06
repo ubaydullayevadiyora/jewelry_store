@@ -10,19 +10,19 @@ export class Customer {
   @ApiProperty({ example: 1, description: "Customer ID" })
   id: number;
 
-  @Column({ unique: true })
+  @Column()
   @ApiProperty({ example: "Ali", description: "Ism (firstname)" })
   firstname: string;
 
-  @Column({ unique: true })
+  @Column()
   @ApiProperty({ example: "Valiyev", description: "Familiya (lastname)" })
   lastname: string;
 
-  @Column({ unique: true })
+  @Column()
   @ApiProperty({ example: "+998901234567", description: "Telefon raqami" })
   phone_number: string;
 
-  @Column({ unique: true })
+  @Column()
   @ApiProperty({ example: "ali@example.com", description: "Email manzili" })
   email: string;
 

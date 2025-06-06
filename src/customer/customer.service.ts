@@ -14,26 +14,26 @@ export class CustomerService {
     private readonly customerRepo: Repository<Customer>
   ) {}
 
-  async create(createCustomerDto: CreateCustomerDto): Promise<Customer> {
-    // Email allaqachon mavjudligini tekshirish
-    const existingCustomer = await this.customerRepo.findOne({
-      where: { email: createCustomerDto.email },
-    });
-    if (existingCustomer) {
-      throw new ConflictException("Email already registered");
-    }
+  // async create(createCustomerDto: CreateCustomerDto): Promise<Customer> {
+  //   // Email allaqachon mavjudligini tekshirish
+  //   const existingCustomer = await this.customerRepo.findOne({
+  //     where: { email: createCustomerDto.email },
+  //   });
+  //   if (existingCustomer) {
+  //     throw new ConflictException("Email already registered");
+  //   }
 
-    // Parolni hash qilish
-    const hashedPassword = await bcrypt.hash(createCustomerDto.password, 10);
+  //   // Parolni hash qilish
+  //   const hashedPassword = await bcrypt.hash(createCustomerDto.password, 10);
 
-    // Yangi mijoz yaratish
-    const customer = this.customerRepo.create({
-      ...createCustomerDto,
-      password: hashedPassword,
-    });
+  //   // Yangi mijoz yaratish
+  //   const customer = this.customerRepo.create({
+  //     ...createCustomerDto,
+  //     password: hashedPassword,
+  //   });
 
-    return this.customerRepo.save(customer);
-  }
+  //   return this.customerRepo.save(customer);
+  // }
 
   async findAll(): Promise<Customer[]> {
     return this.customerRepo.find();

@@ -10,7 +10,7 @@ import {
 
 import { Response, Request } from "express";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { ManagerAuthService } from "./manager.service";
+import { ManagerAuthService } from "./manager-auth.service";
 import { SignInManagerDto } from "./dto/manager.auth.dto";
 
 @ApiTags("Manager Auth")

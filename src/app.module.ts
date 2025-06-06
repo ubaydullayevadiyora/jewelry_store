@@ -29,6 +29,7 @@ import { OrderItem } from "./order_items/entities/order_item.entity";
 import { CategoriesModule } from "./category/category.module";
 import { Payment } from "./payments/entities/payment.entity";
 import { StockHistory } from "./stock_history/entities/stock_history.entity";
+import { TelegramBotModule } from "./bot/bot.module";
 
 @Module({
   imports: [
@@ -80,6 +81,7 @@ import { StockHistory } from "./stock_history/entities/stock_history.entity";
     PaymentsModule,
     DeliveryModule,
     CategoriesModule,
+    TelegramBotModule,
     AuthModule,
   ],
   // controllers: [AdminController, CustomerController, ManagerController],
