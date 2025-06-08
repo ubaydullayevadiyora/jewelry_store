@@ -22,6 +22,7 @@ export class CreateAdminDto {
   @MinLength(6)
   password_hash: string;
 
+  @IsOptional()
   @IsString()
   @MinLength(6)
   confirm_password: string;

@@ -26,6 +26,7 @@ export class AdminAuthService {
       id: admin.id,
       email: admin.email,
       role: "admin",
+      is_super_admin: admin.is_super_admin,
     };
 
     const [accessToken, refreshToken] = await Promise.all([

@@ -73,11 +73,11 @@ export class Customer {
   })
   hashed_refresh_token: string | null;
 
-  @Column({ type: "varchar", nullable: true })
-  otp_code: string | null;
+  // @Column({ type: "varchar", nullable: true })
+  // otp_code: string | null;
 
-  @Column({ type: "timestamp", nullable: true })
-  otp_expire_at: Date | null;
+  // @Column({ type: "timestamp", nullable: true })
+  // otp_expire_at: Date | null;
 
   @Column({ nullable: true })
   telegram_id: string;

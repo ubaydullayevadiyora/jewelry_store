@@ -6,18 +6,26 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { ManagerService } from "./manager.service";
 import { CreateManagerDto } from "./dto/create-manager.dto";
 import { UpdateManagerDto } from "./dto/update-manager.dto";
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from "@nestjs/swagger";
 import { Manager } from "./entities/manager.entity";
+import { Roles } from "../common/decorators/roles.decorator";
+import { ManagerJwtGuard } from "../common/guards/manager-jwt.guard";
+import { RolesGuard } from "../common/guards/roles.guard";
+import { Role } from "../common/enums/role.enum";
+import { AdminJwtGuard } from "../common/guards/admin-jwt.guard";
 
 @ApiTags("Managers")
 @Controller("manager")
 export class ManagerController {
   constructor(private readonly managerService: ManagerService) {}
 
+  @UseGuards(AdminJwtGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Post()
   @ApiOperation({ summary: "Yangi manager yaratish" })
   @ApiResponse({
@@ -29,6 +37,8 @@ export class ManagerController {
     return this.managerService.create(createManagerDto);
   }
 
+  @UseGuards(AdminJwtGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Get()
   @ApiOperation({ summary: "Barcha managerlarni olish" })
   @ApiResponse({
@@ -40,6 +50,8 @@ export class ManagerController {
     return this.managerService.findAll();
   }
 
+  @UseGuards(AdminJwtGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Get(":id")
   @ApiOperation({ summary: "ID boyicha managerni olish" })
   @ApiParam({ name: "id", type: Number, description: "Manager ID" })
@@ -52,6 +64,8 @@ export class ManagerController {
     return this.managerService.findOne(+id);
   }
 
+  @UseGuards(ManagerJwtGuard, RolesGuard)
+  @Roles(Role.MANAGER)
   @Patch(":id")
   @ApiOperation({ summary: "Manager malumotlarini yangilash" })
   @ApiParam({ name: "id", type: Number })
@@ -64,6 +78,8 @@ export class ManagerController {
     return this.managerService.update(+id, updateManagerDto);
   }
 
+  @UseGuards(ManagerJwtGuard, RolesGuard)
+  @Roles(Role.MANAGER)
   @Delete(":id")
   @ApiOperation({ summary: "Managerni ochirish" })
   @ApiParam({ name: "id", type: Number })

@@ -36,9 +36,9 @@ export class CreateCustomerDto {
   @IsString()
   address: string;
 
-  @IsOptional()
-  @IsNumber()
-  otp_code: string;
+  // @IsOptional()
+  // @IsNumber()
+  // otp_code: string;
 
   @IsOptional()
   @IsString()

@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { WinstonModule } from "nest-winston";
 
 import { Admin } from "./admins/entities/admin.entity";
 import { AdminModule } from "./admins/admins.module";
@@ -29,11 +30,15 @@ import { OrderItem } from "./order_items/entities/order_item.entity";
 import { CategoriesModule } from "./category/category.module";
 import { Payment } from "./payments/entities/payment.entity";
 import { StockHistory } from "./stock_history/entities/stock_history.entity";
-import { TelegramBotModule } from "./bot/bot.module";
+import { OtpModule } from "./otp/otp.module";
+import { OtpCode } from "./otp/entities/otp.entity";
+import { winstonConfig } from "./common/logger/winston.logger";
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ".env" }),
+
+    WinstonModule.forRoot(winstonConfig),
 
     TypeOrmModule.forRoot({
       type: "postgres",
@@ -55,18 +60,12 @@ import { TelegramBotModule } from "./bot/bot.module";
         Order,
         OrderItem,
         Payment,
-        StockHistory
+        StockHistory,
+        OtpCode,
       ],
       synchronize: true,
       autoLoadEntities: true,
     }),
-
-    // GraphQLModule.forRoot<ApolloDriverConfig>({
-    //   driver: ApolloDriver,
-    //   autoSchemaFile: "schema.gql",
-    //   sortSchema: true,
-    //   playground: true,
-    // }),
 
     AdminModule,
     CustomerModule,
@@ -81,10 +80,8 @@ import { TelegramBotModule } from "./bot/bot.module";
     PaymentsModule,
     DeliveryModule,
     CategoriesModule,
-    TelegramBotModule,
     AuthModule,
+    OtpModule,
   ],
-  // controllers: [AdminController, CustomerController, ManagerController],
-  // providers: [AdminService, CustomerService, ManagerService],
 })
 export class AppModule {}

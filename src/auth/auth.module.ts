@@ -13,8 +13,9 @@ import { CustomerAuthService } from "./customer/customer-auth.service";
 import { ManagerAuthService } from "./manager/manager-auth.service";
 import { CustomerAuthController } from "./customer/customer-auth.controller";
 import { ManagerAuthController } from "./manager/manager-auth.controller";
-import { ServiceModule } from "../common/services/service.module";
-import { TelegramBotModule } from "../bot/bot.module";
+import { AdminJwtStrategy } from "./strategies/admin-jwt.strategy";
+import { OtpModule } from "../otp/otp.module";
+import { MailServiceModule } from "../common/services/email-service.module";
 
 @Module({
   imports: [
@@ -26,10 +27,16 @@ import { TelegramBotModule } from "../bot/bot.module";
     AdminModule,
     CustomerModule,
     ManagerModule,
-    ServiceModule,
-    TelegramBotModule
+    OtpModule,
+    MailServiceModule
+    
   ],
-  providers: [AdminAuthService, CustomerAuthService, ManagerAuthService],
+  providers: [
+    AdminAuthService,
+    CustomerAuthService,
+    ManagerAuthService,
+    AdminJwtStrategy,
+  ],
   controllers: [
     AdminAuthController,
     CustomerAuthController,
