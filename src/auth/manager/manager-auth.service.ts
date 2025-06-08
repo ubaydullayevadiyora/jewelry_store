@@ -1,4 +1,3 @@
-// src/auth/manager/manager.service.ts
 import {
   BadRequestException,
   ForbiddenException,

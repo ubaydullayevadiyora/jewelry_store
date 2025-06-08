@@ -73,20 +73,4 @@ export class CustomerService {
     const customer = await this.findOne(id);
     return this.customerRepo.remove(customer);
   }
-
-  // async verifyOtp(email: string, otp: string): Promise<string> {
-  //   const customer = await this.customerRepo.findOne({
-  //     where: { email },
-  //   });
-
-  //   if (!customer) {
-  //     throw new NotFoundException("Customer not found");
-  //   }
-
-  //   if (customer.otp === String(otp)) {
-  //     return "OTP verified successfully!";
-  //   } else {
-  //     throw new BadRequestException("Invalid OTP!");
-  //   }
-  // }
 }

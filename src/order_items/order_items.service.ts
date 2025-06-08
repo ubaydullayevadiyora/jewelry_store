@@ -19,7 +19,6 @@ export class OrderItemsService {
   ) {}
 
   async createOrderItem(dto: CreateOrderItemDto): Promise<OrderItem> {
-    // productni olish
     const product = await this.productRepo.findOneBy({
       id: dto.product_id,
     });
@@ -27,7 +26,6 @@ export class OrderItemsService {
       throw new NotFoundException("Product not found");
     }
 
-    // price_at_order_time ni product.price ga tenglab olamiz
     const priceAtOrderTime = product.price;
 
     const orderItemData = {

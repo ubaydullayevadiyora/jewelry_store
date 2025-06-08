@@ -14,7 +14,7 @@ export class AdminService {
   ) {}
 
   async create(dto: CreateAdminDto) {
-    const hashedPassword = await bcrypt.hash(dto.password_hash, 10); // 10 - salt rounds
+    const hashedPassword = await bcrypt.hash(dto.password_hash, 10); 
 
     const admin = this.adminRepo.create({
       ...dto,

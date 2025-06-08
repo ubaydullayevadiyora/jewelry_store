@@ -24,7 +24,6 @@ export class OrdersService {
 
     const pickupCode = this.generatePickupCode();
 
-    // Avval orderni yaratamiz
     const orderData = {
       ...dto,
       pickup_code: pickupCode,
@@ -35,7 +34,6 @@ export class OrdersService {
     const order = this.orderRepo.create(orderData);
     await this.orderRepo.save(order);
 
-    // Order item-larni yaratamiz (agar DTO ichida items bo‘lsa)
     if ("items" in dto && Array.isArray(dto.items)) {
       for (const item of dto.items) {
         const product = await this.productRepo.findOneByOrFail({
@@ -46,7 +44,7 @@ export class OrdersService {
           order: { id: order.id },
           product: { id: item.product_id },
           quantity: item.quantity,
-          price_at_order_time: product.price, // MUHIM QISM!
+          price_at_order_time: product.price, 
         });
 
         await this.orderItemRepo.save(orderItem);

@@ -35,7 +35,6 @@ export class CustomerAuthController {
     @Body() signInDto: SignInCustomerDto,
     @Res({ passthrough: true }) res: Response
   ) {
-    // Tokenlarni generatsiya qilib, cookie va javobni qaytaradi
     return this.customerAuthService.signIn(signInDto, res);
   }
 

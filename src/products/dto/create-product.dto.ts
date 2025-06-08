@@ -6,10 +6,6 @@ export class CreateProductDto {
   @IsNumber()
   material_id: number;
 
-  // @ApiProperty()
-  // @IsNumber()
-  // stone_id: number;
-
   @ApiProperty()
   @IsNumber()
   category_id: number;

@@ -24,10 +24,6 @@ export class Product {
   @ApiProperty()
   material_id: number;
 
-  // @Column()
-  // @ApiProperty()
-  // stone_id: number;
-
   @Column()
   @ApiProperty()
   category_id: number;
@@ -60,15 +56,9 @@ export class Product {
   @ApiProperty()
   is_active: boolean;
 
-  // stone: number[];
-
   @ManyToOne(() => Material, (material) => material.products)
   @JoinColumn({ name: "material_id" })
   material: Material;
-
-  // @ManyToOne(() => Stone)
-  // @JoinColumn({ name: "stone_id" })
-  // stone: Stone;
 
   @ManyToOne(() => Category, (category) => category.products, {
     nullable: true,
