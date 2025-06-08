@@ -6,6 +6,7 @@ import {
   Req,
   UnauthorizedException,
   HttpCode,
+  Param,
 } from "@nestjs/common";
 import { AdminAuthService } from "./admin-auth.service";
 import { SignInAdminDto } from "./dto/admin.auth.dto";
@@ -27,17 +28,12 @@ export class AdminAuthController {
     return this.adminAuthService.signIn(signInDto, res);
   }
 
-  @Post("sign-out")
   @HttpCode(200)
   @ApiOperation({ summary: "Admin tizimdan chiqadi" })
-  async signOut(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response
-  ) {
-    const refreshToken = req.cookies?.refresh_token;
-    if (!refreshToken) throw new UnauthorizedException("Token mavjud emas");
-
-    return this.adminAuthService.signOut(refreshToken, res);
+  @Post("sign-out/:id")
+  async signOut(@Param("id") id: string, @Res() res: Response) {
+    const result = await this.adminAuthService.signOutById(+id, res);
+    return res.json(result);
   }
 
   @Post("refresh")

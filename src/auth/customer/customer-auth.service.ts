@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
@@ -50,23 +51,50 @@ export class CustomerAuthService {
   }
 
   async signUp(dto: CreateCustomerDto) {
-    const customer = this.customerRepo.create(dto);
-    customer.is_active = false;
+    try {
+      const saltOrRounds = 10;
+      dto.password = await bcrypt.hash(dto.password, saltOrRounds);
+      delete dto.confirm_password;
 
-    await this.customerRepo.save(customer);
+      const customer = this.customerRepo.create(dto);
+      customer.is_active = false;
 
-    const otp = await this.otpService.generateOtp(customer.email);
+      await this.customerRepo.save(customer);
 
-    if (customer.email) {
-      const subject = "Royxatdan otish va OTP kodni olish";
-      const message = `Assalomu alaykum, ${customer.firstname}!\n\nRoyxatdan otganingiz uchun rahmat.\n\nIltimos, quyidagi OTP kodingizni oling:\n${otp}`;
+      await this.customerRepo.save(customer);
 
-      await this.mailService.sendMail(customer.email, subject, message);
+      const otp = await this.otpService.generateOtp(customer.email);
+
+      if (customer.email) {
+        const subject = "Royxatdan otish va OTP kodni olish";
+        const message = `Assalomu alaykum, ${customer.firstname}!\n\nRoyxatdan otganingiz uchun rahmat.\n\nIltimos, quyidagi OTP kodingizni oling:\n${otp}`;
+
+        await this.mailService.sendMail(customer.email, subject, message);
+      }
+
+      return {
+        message:
+          "Royxatdan otish muvaffaqiyatli o'tdi. Iltimos, emailni tekshiring.",
+      };
+    } catch (error) {
+      if (error.code === "23505") {
+        if (error.detail.includes("(email)")) {
+          throw new BadRequestException(
+            "Bu email bilan foydalanuvchi allaqachon mavjud."
+          );
+        }
+        if (error.detail.includes("(phone_number)")) {
+          throw new BadRequestException(
+            "Bu telefon raqami bilan foydalanuvchi allaqachon mavjud."
+          );
+        }
+      }
+
+      console.error("SIGN UP ERROR:", error);
+      throw new InternalServerErrorException(
+        "Serverda kutilmagan xatolik yuz berdi."
+      );
     }
-
-    return {
-      message: "Royxatdan otish muvaffaqiyatli. Iltimos, emailni tekshiring.",
-    };
   }
 
   async signIn(signInCustomerDto: SignInCustomerDto, res: Response) {
@@ -80,7 +108,7 @@ export class CustomerAuthService {
 
     if (!customer.is_active) {
       throw new ForbiddenException(
-        "Hisob faollashtirilmagan. Telegram bot orqali OTP tasdiqlang!!!"
+        "Customer faollashtirilmagan. Iltimos emaildagi otp code orqali o'zingizni tasdiqlang!!!"
       );
     }
 

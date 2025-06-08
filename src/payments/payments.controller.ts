@@ -1,5 +1,4 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { ManagerJwtGuard } from '../common/guards/manager-jwt.guard';
@@ -7,10 +6,11 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../common/enums/role.enum';
 import { CustomerJwtGuard } from '../common/guards/customer-jwt.guard';
+import { PaymentService } from './payments.service';
 
 @Controller("payments")
-export class PaymentsController {
-  constructor(private readonly paymentsService: PaymentsService) {}
+export class PaymentController {
+  constructor(private readonly paymentsService: PaymentService) {}
 
   @UseGuards(CustomerJwtGuard, RolesGuard)
   @Roles(Role.CUSTOMER)

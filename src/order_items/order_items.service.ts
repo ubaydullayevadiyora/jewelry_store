@@ -18,20 +18,28 @@ export class OrderItemsService {
     private productRepo: Repository<Product>
   ) {}
 
-  async create(dto: CreateOrderItemDto) {
-    const order = await this.orderRepo.findOneBy({ id: dto.orderId });
-    if (!order) throw new NotFoundException("Order not found");
-
-    const product = await this.productRepo.findOneBy({ id: dto.productId });
-    if (!product) throw new NotFoundException("Product not found");
-
-    const item = this.itemRepo.create({
-      quantity: dto.quantity,
-      order,
-      product,
+  async createOrderItem(dto: CreateOrderItemDto): Promise<OrderItem> {
+    // productni olish
+    const product = await this.productRepo.findOneBy({
+      id: dto.product_id,
     });
+    if (!product) {
+      throw new NotFoundException("Product not found");
+    }
 
-    return this.itemRepo.save(item);
+    // price_at_order_time ni product.price ga tenglab olamiz
+    const priceAtOrderTime = product.price;
+
+    const orderItemData = {
+      quantity: dto.quantity,
+      price_at_order_time: priceAtOrderTime,
+      orderId: dto.order_id,
+      productId: dto.product_id,
+    };
+
+    const orderItem = this.itemRepo.create(orderItemData);
+    await this.itemRepo.save(orderItem);
+    return orderItem;
   }
 
   findAll() {
@@ -50,14 +58,14 @@ export class OrderItemsService {
   async update(id: number, dto: UpdateOrderItemDto) {
     const item = await this.findOne(id);
 
-    if (dto.orderId) {
-      const order = await this.orderRepo.findOneBy({ id: dto.orderId });
+    if (dto.order_id) {
+      const order = await this.orderRepo.findOneBy({ id: dto.order_id });
       if (!order) throw new NotFoundException("Order not found");
       item.order = order;
     }
 
-    if (dto.productId) {
-      const product = await this.productRepo.findOneBy({ id: dto.productId });
+    if (dto.product_id) {
+      const product = await this.productRepo.findOneBy({ id: dto.product_id });
       if (!product) throw new NotFoundException("Product not found");
       item.product = product;
     }

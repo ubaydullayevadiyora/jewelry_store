@@ -3,6 +3,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
@@ -72,6 +73,9 @@ export class AdminAuthService {
 
     admin.hashed_refresh_token = await bcrypt.hash(refreshToken, 7);
     admin.is_active = true;
+
+    admin.last_login = new Date();
+
     await this.adminRepo.save(admin);
 
     return {
@@ -81,18 +85,14 @@ export class AdminAuthService {
     };
   }
 
-  async signOut(refreshToken: string, res: Response) {
-    const userData = await this.jwtService.verify(refreshToken, {
-      secret: process.env.REFRESH_TOKEN_KEY,
-    });
-
-    if (!userData) {
-      throw new ForbiddenException("Foydalanuvchi topilmadi");
+  async signOutById(id: number, res: Response) {
+    const admin = await this.adminRepo.findOne({ where: { id } });
+    if (!admin) {
+      throw new NotFoundException("Foydalanuvchi topilmadi");
     }
 
-    await this.adminRepo.update(userData.id, {
-      hashed_refresh_token: null,
-    });
+    admin.hashed_refresh_token = null;
+    await this.adminRepo.save(admin);
 
     res.clearCookie("refresh_token");
     return {

@@ -7,37 +7,57 @@ import { Order } from "./entities/order.entity";
 import { OrderItem } from "../order_items/entities/order_item.entity";
 import { Product } from "../products/entities/product.entity";
 
-
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
-    private orderRepo: Repository<Order>,
-    @InjectRepository(OrderItem)
-    private itemRepo: Repository<OrderItem>,
+    private readonly orderRepo: Repository<Order>,
     @InjectRepository(Product)
-    private productRepo: Repository<Product>
+    private readonly productRepo: Repository<Product>,
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepo: Repository<OrderItem>
   ) {}
 
-  async create(dto: CreateOrderDto) {
-    const order = this.orderRepo.create({
-      customer_name: dto.customer_name,
-      customer_phone: dto.customer_phone,
-      items: [],
-    });
+  async create(dto: CreateOrderDto): Promise<Order> {
+    const now = new Date();
+    const expireAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
-    for (const item of dto.items) {
-      const product = await this.productRepo.findOneBy({ id: item.product_id });
-      if (!product)
-        throw new NotFoundException(`Product ${item.product_id} not found`);
-      const orderItem = this.itemRepo.create({
-        product,
-        quantity: item.quantity,
-      });
-      order.items.push(orderItem);
+    const pickupCode = this.generatePickupCode();
+
+    // Avval orderni yaratamiz
+    const orderData = {
+      ...dto,
+      pickup_code: pickupCode,
+      pickup_code_expire_at: expireAt,
+      is_picked_up: false,
+    };
+
+    const order = this.orderRepo.create(orderData);
+    await this.orderRepo.save(order);
+
+    // Order item-larni yaratamiz (agar DTO ichida items bo‘lsa)
+    if ("items" in dto && Array.isArray(dto.items)) {
+      for (const item of dto.items) {
+        const product = await this.productRepo.findOneByOrFail({
+          id: item.product_id,
+        });
+
+        const orderItem = this.orderItemRepo.create({
+          order: { id: order.id },
+          product: { id: item.product_id },
+          quantity: item.quantity,
+          price_at_order_time: product.price, // MUHIM QISM!
+        });
+
+        await this.orderItemRepo.save(orderItem);
+      }
     }
 
-    return this.orderRepo.save(order);
+    return order;
+  }
+
+  private generatePickupCode(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString();
   }
 
   findAll() {

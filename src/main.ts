@@ -4,7 +4,7 @@ import { ValidationPipe, BadRequestException } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import * as cookieParser from "cookie-parser";
 import * as basicAuth from "express-basic-auth";
-import { AllExceptionsFilter } from "./common/errors/error.handling";
+// import { AllExceptionsFilter } from "./common/errors/error.handling";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,7 +21,7 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  app.useGlobalFilters(new AllExceptionsFilter());
+  // app.useGlobalFilters(new AllExceptionsFilter());
 
   app.setGlobalPrefix("api");
 

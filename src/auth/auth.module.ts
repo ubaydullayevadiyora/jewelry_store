@@ -16,6 +16,8 @@ import { ManagerAuthController } from "./manager/manager-auth.controller";
 import { AdminJwtStrategy } from "./strategies/admin-jwt.strategy";
 import { OtpModule } from "../otp/otp.module";
 import { MailServiceModule } from "../common/services/email-service.module";
+import { CustomerJwtStrategy } from "./strategies/customer-jwt.strategy";
+import { ManagerJwtStrategy } from "./strategies/manager-jwt.strategy";
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { MailServiceModule } from "../common/services/email-service.module";
     CustomerAuthService,
     ManagerAuthService,
     AdminJwtStrategy,
+    CustomerJwtStrategy,
+    ManagerJwtStrategy
   ],
   controllers: [
     AdminAuthController,

@@ -28,11 +28,11 @@ export class OrderItemsController {
   @Post()
   @ApiOperation({ summary: "Create order item" })
   create(@Body() dto: CreateOrderItemDto) {
-    return this.service.create(dto);
+    return this.service.createOrderItem(dto);
   }
 
   @UseGuards(ManagerJwtGuard, RolesGuard)
-  @Roles(Role.CUSTOMER)
+  @Roles(Role.MANAGER)
   @Get()
   @ApiOperation({ summary: "Get all order items" })
   findAll() {
@@ -48,7 +48,7 @@ export class OrderItemsController {
   }
 
   @UseGuards(ManagerJwtGuard, RolesGuard)
-  @Roles(Role.CUSTOMER)
+  @Roles(Role.MANAGER)
   @Put(":id")
   @ApiOperation({ summary: "Update order item" })
   update(@Param("id") id: string, @Body() dto: UpdateOrderItemDto) {

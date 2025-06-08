@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Order } from "../../orders/entities/order.entity";
 
 @ObjectType()
 @Entity("manager")
@@ -58,4 +59,7 @@ export class Manager {
     required: false,
   })
   hashed_refresh_token: string | null;
+
+  @OneToMany(() => Order, (order) => order.manager)
+  orders: Order[];
 }

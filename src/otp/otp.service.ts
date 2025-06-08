@@ -1,13 +1,20 @@
-import { Injectable, BadRequestException } from "@nestjs/common";
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { OtpCode } from "./entities/otp.entity";
+import { Customer } from "../customer/entities/customer.entity";
 
 @Injectable()
 export class OtpService {
   constructor(
     @InjectRepository(OtpCode)
-    private otpRepository: Repository<OtpCode>
+    private otpRepository: Repository<OtpCode>,
+    @InjectRepository(Customer)
+    private customerRepository: Repository<Customer>
   ) {}
 
   async generateOtp(email: string): Promise<string> {
@@ -45,6 +52,19 @@ export class OtpService {
     found.is_used = true;
     await this.otpRepository.save(found);
 
-    return { message: "OTP muvaffaqiyatli tasdiqlandi." };
+    const customer = await this.customerRepository.findOne({
+      where: { email },
+    });
+    if (!customer) {
+      throw new NotFoundException("Foydalanuvchi topilmadi.");
+    }
+
+    customer.is_active = true;
+    await this.customerRepository.save(customer);
+
+    return {
+      message:
+        "OTP muvaffaqiyatli tasdiqlandi va foydalanuvchi faollashtirildi.",
+    };
   }
 }

@@ -5,6 +5,7 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { Product } from "./entities/product.entity";
 import { Stone } from "../stones/entities/stone.entity";
+import { Category } from "../category/entities/category.entity";
 
 @Injectable()
 export class ProductService {
@@ -12,7 +13,9 @@ export class ProductService {
     @InjectRepository(Product)
     private readonly productRepo: Repository<Product>,
     @InjectRepository(Stone)
-    private readonly stoneRepo: Repository<Stone>
+    private readonly stoneRepo: Repository<Stone>,
+    @InjectRepository(Category)
+    private readonly categoryRepo: Repository<Category>
   ) {}
 
   async create(createProductDto: CreateProductDto) {
@@ -35,12 +38,17 @@ export class ProductService {
   }
 
   async findOne(id: number) {
-    const product = await this.productRepo.findOne({
-      where: { id },
-      relations: ["category", "material", "stones"],
-    });
-    if (!product) throw new NotFoundException("Product not found");
-    return product;
+    try {
+      const product = await this.productRepo.findOne({
+        where: { id },
+        relations: ["category", "material", "stones"],
+      });
+      if (!product) throw new NotFoundException("Product not found");
+      return product;
+    } catch (error) {
+      console.error("findOne error:", error);
+      throw error;
+    }
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {

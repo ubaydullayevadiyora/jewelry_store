@@ -4,7 +4,7 @@ import { Repository } from "typeorm";
 import { Manager } from "./entities/manager.entity";
 import { CreateManagerDto } from "./dto/create-manager.dto";
 import { UpdateManagerDto } from "./dto/update-manager.dto";
-
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class ManagerService {
@@ -13,8 +13,15 @@ export class ManagerService {
     private readonly adminRepo: Repository<Manager>
   ) {}
 
-  create(dto: CreateManagerDto) {
-    const admin = this.adminRepo.create(dto);
+  async create(dto: CreateManagerDto) {
+    const saltRounds = 10; 
+    const hashedPassword = await bcrypt.hash(dto.password_hash, saltRounds);
+
+    const admin = this.adminRepo.create({
+      ...dto,
+      password_hash: hashedPassword, 
+    });
+
     return this.adminRepo.save(admin);
   }
 
@@ -29,7 +36,7 @@ export class ManagerService {
   }
 
   async update(id: number, dto: UpdateManagerDto) {
-    await this.findOne(id); 
+    await this.findOne(id);
     await this.adminRepo.update(id, dto);
     return this.findOne(id);
   }

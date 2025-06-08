@@ -32,16 +32,16 @@ export class ProductController {
     return this.productService.create(createProductDto);
   }
 
-  @UseGuards(ManagerJwtGuard, CustomerJwtGuard, RolesGuard)
-  @Roles(Role.MANAGER)
+  @UseGuards(CustomerJwtGuard, RolesGuard)
+  @Roles(Role.CUSTOMER)
   @Get()
   @ApiResponse({ status: 200, type: [Product] })
   findAll() {
     return this.productService.findAll();
   }
 
-  @UseGuards(ManagerJwtGuard, RolesGuard)
-  @Roles(Role.MANAGER)
+  @UseGuards(CustomerJwtGuard, RolesGuard)
+  @Roles(Role.CUSTOMER)
   @Get(":id")
   @ApiResponse({ status: 200, type: Product })
   findOne(@Param("id") id: string) {

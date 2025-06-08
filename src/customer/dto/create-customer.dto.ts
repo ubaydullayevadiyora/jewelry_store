@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  MaxLength,
   MinLength,
 } from "class-validator";
 
@@ -26,21 +27,15 @@ export class CreateCustomerDto {
   @MinLength(6)
   password: string;
 
+  @IsOptional()
   @IsString()
   @MinLength(6)
-  confirm_password: string;
+  @MaxLength(32)
+  confirm_password?: string | null
 
   @IsString()
   birth_date: string;
 
   @IsString()
   address: string;
-
-  // @IsOptional()
-  // @IsNumber()
-  // otp_code: string;
-
-  @IsOptional()
-  @IsString()
-  telegram_id: string;
 }

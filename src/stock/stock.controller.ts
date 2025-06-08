@@ -31,8 +31,8 @@ export class StocksController {
     return this.stocksService.create(dto);
   }
 
-  @UseGuards(ManagerJwtGuard, AdminJwtGuard, RolesGuard)
-  @Roles(Role.MANAGER)
+  @UseGuards(AdminJwtGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Get()
   @ApiOperation({ summary: "Get all stock records" })
   findAll() {

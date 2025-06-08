@@ -10,9 +10,7 @@ import { ManagerModule } from "./manager/manager.module";
 import { MaterialsModule } from "./materials/materials.module";
 import { StonesModule } from "./stones/stones.module";
 import { StockHistoryModule } from "./stock_history/stock_history.module";
-import { OrdersModule } from "./orders/orders.module";
 import { OrderItemsModule } from "./order_items/order_items.module";
-import { PaymentsModule } from "./payments/payments.module";
 import { DeliveryModule } from "./delivery/delivery.module";
 import { Manager } from "./manager/entities/manager.entity";
 import { Customer } from "./customer/entities/customer.entity";
@@ -33,6 +31,8 @@ import { StockHistory } from "./stock_history/entities/stock_history.entity";
 import { OtpModule } from "./otp/otp.module";
 import { OtpCode } from "./otp/entities/otp.entity";
 import { winstonConfig } from "./common/logger/winston.logger";
+import { PaymentModule } from "./payments/payments.module";
+import { OrderModule } from "./orders/orders.module";
 
 @Module({
   imports: [
@@ -75,9 +75,9 @@ import { winstonConfig } from "./common/logger/winston.logger";
     StonesModule,
     StockHistoryModule,
     StocksModule,
-    OrdersModule,
+    OrderModule,
     OrderItemsModule,
-    PaymentsModule,
+    PaymentModule,
     DeliveryModule,
     CategoriesModule,
     AuthModule,

@@ -1,16 +1,16 @@
-import { IsInt } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { IsInt, IsNumber, IsOptional } from "class-validator";
 
 export class CreateOrderItemDto {
-  @ApiProperty()
+  @IsInt()
+  order_id: number;
+
+  @IsInt()
+  product_id: number;
+
   @IsInt()
   quantity: number;
 
-  @ApiProperty()
-  @IsInt()
-  orderId: number;
-
-  @ApiProperty()
-  @IsInt()
-  productId: number;
+  @IsOptional()
+  @IsNumber()
+  price_at_order_time: number;
 }

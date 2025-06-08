@@ -1,26 +1,44 @@
-import { IsString, IsNotEmpty, IsArray, ValidateNested } from "class-validator";
+import {
+  IsInt,
+  IsString,
+  IsNotEmpty,
+  IsArray,
+  ValidateNested,
+  Min,
+  ArrayNotEmpty,
+} from "class-validator";
 import { Type } from "class-transformer";
-import { ApiProperty } from "@nestjs/swagger";
 
 class OrderItemDto {
-  @ApiProperty()
+  @IsInt()
   product_id: number;
 
-  @ApiProperty()
+  @IsInt()
+  @Min(1)
   quantity: number;
 }
 
 export class CreateOrderDto {
-  @ApiProperty()
-  @IsString()
-  customer_name: string;
+  @IsInt()
+  customer_id: number;
 
-  @ApiProperty()
-  @IsString()
-  customer_phone: string;
+  @IsInt()
+  manager_id: number;
 
-  @ApiProperty({ type: [OrderItemDto] })
+  @IsInt()
+  @Min(0)
+  total_price: number;
+
+  @IsString()
+  @IsNotEmpty()
+  status: string;
+
+  @IsString()
+  @IsNotEmpty()
+  delivery_option: string;
+
   @IsArray()
+  @ArrayNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => OrderItemDto)
   items: OrderItemDto[];

@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Order } from "../../orders/entities/order.entity";
 
 @ObjectType()
 @Entity("customer")
@@ -22,7 +23,7 @@ export class Customer {
   @ApiProperty({ example: "+998901234567", description: "Telefon raqami" })
   phone_number: string;
 
-  @Column()
+  @Column({ unique: true })
   @ApiProperty({ example: "ali@example.com", description: "Email manzili" })
   email: string;
 
@@ -44,12 +45,12 @@ export class Customer {
   })
   password: string;
 
-  @Column()
+  // @Column()
   @ApiProperty({
     example: "hashed_password123",
     description: "Parol (hash holatda)",
   })
-  confirm_password: string;
+  confirm_password: string | null;
 
   @Column({ type: "timestamp", nullable: true })
   @ApiProperty({
@@ -73,12 +74,6 @@ export class Customer {
   })
   hashed_refresh_token: string | null;
 
-  // @Column({ type: "varchar", nullable: true })
-  // otp_code: string | null;
-
-  // @Column({ type: "timestamp", nullable: true })
-  // otp_expire_at: Date | null;
-
-  @Column({ nullable: true })
-  telegram_id: string;
+  @OneToMany(() => Order, (order) => order.customer)
+  orders: Order[];
 }
