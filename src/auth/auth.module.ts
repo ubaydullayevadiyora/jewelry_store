@@ -23,15 +23,14 @@ import { ManagerJwtStrategy } from "./strategies/manager-jwt.strategy";
   imports: [
     TypeOrmModule.forFeature([Admin, Customer, Manager]),
     JwtModule.register({
-      secret: process.env.ACCESS_TOKEN_KEY,
-      signOptions: { expiresIn: process.env.ACCESS_TOKEN_TIME },
+      secret: process.env.JWT_SECRET_KEY,
+      signOptions: { expiresIn: process.env.JWT_SECRET_KEY },
     }),
     AdminModule,
     CustomerModule,
     ManagerModule,
     OtpModule,
-    MailServiceModule
-    
+    MailServiceModule,
   ],
   providers: [
     AdminAuthService,
@@ -39,7 +38,7 @@ import { ManagerJwtStrategy } from "./strategies/manager-jwt.strategy";
     ManagerAuthService,
     AdminJwtStrategy,
     CustomerJwtStrategy,
-    ManagerJwtStrategy
+    ManagerJwtStrategy,
   ],
   controllers: [
     AdminAuthController,
