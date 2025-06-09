@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   OneToMany,
   OneToOne,
+  JoinColumn,
 } from "typeorm";
 import { Customer } from "../../customer/entities/customer.entity";
 import { Manager } from "../../manager/entities/manager.entity";
@@ -23,12 +24,6 @@ export class Order {
 
   @Column()
   manager_id: number;
-
-  @ManyToOne(() => Customer, (customer) => customer.orders)
-  customer: Customer;
-
-  @ManyToOne(() => Manager, (manager) => manager.orders)
-  manager: Manager;
 
   @Column("decimal")
   total_price: number;
@@ -59,4 +54,12 @@ export class Order {
 
   @OneToMany(() => Payment, (payment) => payment.order)
   payments: Payment[];
+
+  @ManyToOne(() => Customer, (customer) => customer.orders)
+  @JoinColumn({ name: "customer_id" }) 
+  customer: Customer;
+
+  @ManyToOne(() => Manager, (manager) => manager.orders)
+  @JoinColumn({ name: "manager_id" }) 
+  manager: Manager;
 }

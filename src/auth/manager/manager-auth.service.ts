@@ -70,6 +70,7 @@ export class ManagerAuthService {
 
     manager.hashed_refresh_token = await bcrypt.hash(refreshToken, 7);
     manager.is_active = true;
+    manager.last_login = new Date();
     await this.managerRepo.save(manager);
 
     return {

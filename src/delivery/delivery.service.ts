@@ -28,13 +28,15 @@ export class DeliveryService {
   }
 
   findAll() {
-    return this.deliveryRepo.find({ relations: ["order"] });
+    return this.deliveryRepo.find({
+      relations: ["order", "order.customer", "order.manager"],
+    });
   }
 
   async findOne(id: number) {
     const delivery = await this.deliveryRepo.findOne({
       where: { id },
-      relations: ["order"],
+      relations: ["order", "order.customer", "order.manager"],
     });
     if (!delivery) throw new NotFoundException("Delivery not found");
     return delivery;

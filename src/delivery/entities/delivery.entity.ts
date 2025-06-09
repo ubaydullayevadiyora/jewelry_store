@@ -32,10 +32,10 @@ export class Delivery {
   @Column({ type: "enum", enum: DeliveryStatus })
   status: DeliveryStatus;
 
-  @Column({ type: "decimal" })
+  @Column()
   delivery_price: number;
 
-  @Column({ type: "timestamp" })
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   delivery_at: Date;
 
   @OneToOne(() => Order, (order) => order.delivery, { onDelete: "CASCADE" })

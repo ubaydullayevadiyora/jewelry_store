@@ -131,6 +131,10 @@ export class CustomerAuthService {
     customer.hashed_refresh_token = await bcrypt.hash(refreshToken, 7);
     await this.customerRepo.save(customer);
 
+    customer.last_login = new Date();
+
+    await this.customerRepo.save(customer);
+
     return {
       message: "Customer tizimga kirdi",
       accessToken,

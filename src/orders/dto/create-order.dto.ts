@@ -6,17 +6,10 @@ import {
   ValidateNested,
   Min,
   ArrayNotEmpty,
+  IsOptional,
 } from "class-validator";
 import { Type } from "class-transformer";
-
-class OrderItemDto {
-  @IsInt()
-  product_id: number;
-
-  @IsInt()
-  @Min(1)
-  quantity: number;
-}
+import { CreateOrderItemDto } from "../../order_items/dto/create-order_item.dto";
 
 export class CreateOrderDto {
   @IsInt()
@@ -37,9 +30,10 @@ export class CreateOrderDto {
   @IsNotEmpty()
   delivery_option: string;
 
+  @IsOptional()
   @IsArray()
   @ArrayNotEmpty()
   @ValidateNested({ each: true })
-  @Type(() => OrderItemDto)
-  items: OrderItemDto[];
+  @Type(() => CreateOrderItemDto)
+  items: CreateOrderItemDto[];
 }

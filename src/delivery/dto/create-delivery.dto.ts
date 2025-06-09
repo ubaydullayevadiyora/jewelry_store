@@ -22,9 +22,10 @@ export class CreateDeliveryDto {
   @IsEnum(DeliveryStatus)
   status: DeliveryStatus;
 
-  @IsDecimal()
+  @IsOptional()
   delivery_price: number;
 
+  @IsOptional()
   @IsDateString()
   delivery_at: Date;
 }
