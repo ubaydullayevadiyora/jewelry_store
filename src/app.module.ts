@@ -33,6 +33,7 @@ import { OtpCode } from "./otp/entities/otp.entity";
 import { winstonConfig } from "./common/logger/winston.logger";
 import { PaymentModule } from "./payments/payments.module";
 import { OrderModule } from "./orders/orders.module";
+import { GetProductModule } from "./filters/product-filter.module";
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { OrderModule } from "./orders/orders.module";
     CategoriesModule,
     AuthModule,
     OtpModule,
+    GetProductModule
   ],
 })
 export class AppModule {}

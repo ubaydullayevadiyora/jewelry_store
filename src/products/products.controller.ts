@@ -8,6 +8,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from "@nestjs/common";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
@@ -18,6 +19,7 @@ import { RolesGuard } from "../common/guards/roles.guard";
 import { ManagerJwtGuard } from "../common/guards/manager-jwt.guard";
 import { Roles } from "../common/decorators/roles.decorator";
 import { Role } from "../common/enums/role.enum";
+import { AdminJwtGuard } from "../common/guards/admin-jwt.guard";
 
 @ApiTags("Product")
 @Controller("products")
