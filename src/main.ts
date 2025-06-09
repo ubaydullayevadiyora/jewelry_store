@@ -10,7 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use(
-    ["/api/docs"],
+    ["/docs"],
     basicAuth({
       users: {
         superadmin: "strong2025",
