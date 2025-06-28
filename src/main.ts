@@ -38,9 +38,10 @@ async function bootstrap() {
       const allowedOrigins = [
         "http://localhost:8000",
         "http://localhost:3000",
-        "https://skidkachi.uz",
-        "https://api.skidkachi.uz",
-        "https://skidkachi.vercel.app",
+        "https://jewelry.uz",
+        "https://api.jewelry.uz",
+        "https://jewelry.vercel.app",
+        "http://localhost:5173",
       ];
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
